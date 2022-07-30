@@ -3,9 +3,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/search_menu_item"
-        android:contentDescription="search item"
+        android:contentDescription="@string/search_item"
         android:icon="@drawable/ic_baseline_search_24"
-        android:title="search"
+        android:title="@string/search"
         app:actionViewClass="androidx.appcompat.widget.SearchView"
         app:showAsAction="ifRoom|collapseActionView" />
+    <item
+        android:id="@+id/info"
+        android:contentDescription="@string/information"
+        android:icon="@drawable/ic_baseline_info_24"
+        android:title="@string/information"
+        android:visible="false"
+        app:showAsAction="always" />
 </menu>

@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">FindImagesApp</string>
-    <string name="serpapi_api_key">0838e7ae1402e544a8980552b72a1d012932ae8e573a7be4718c52ee27104c36</string>
+    <string name="details">Details</string>
+    <string name="default_toolbar_title"><![CDATA[Click for search ->]]></string>
+    <string name="search_item">search item</string>
+    <string name="search">search</string>
+    <string name="information">information</string>
+    <string name="open_link">open link</string>
 </resources>

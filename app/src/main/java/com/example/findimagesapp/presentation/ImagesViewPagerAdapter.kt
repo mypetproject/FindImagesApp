@@ -4,12 +4,12 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 
-class ImagesViewPagerAdapter (fragmentActivity: FragmentActivity) :
-    FragmentStateAdapter(fragmentActivity){
+class ImagesViewPagerAdapter(fragmentActivity: FragmentActivity) :
+    FragmentStateAdapter(fragmentActivity) {
 
-    var urls : List<String> = emptyList()
+    var itemsCount = 0
 
-    override fun getItemCount(): Int = urls.size
+    override fun getItemCount(): Int = itemsCount
 
     override fun createFragment(position: Int): Fragment {
         return FullImageFragment.newInstance(position)
