@@ -5,8 +5,22 @@ import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query
 
+/**
+ * API for working with a search request
+ *
+ * @author S. Kishkar
+ */
 interface ImageApi {
 
-    @GET("search.json?tbm=isch&api_key=0838e7ae1402e544a8980552b72a1d012932ae8e573a7be4718c52ee27104c36")
+    /**
+     * Get search results
+     *
+     * @param query search keyword
+     * @param page search page
+     * @return [Call] with search results
+     *
+     * @author S. Kishkar
+     */
+    @GET("search.json?tbm=isch&api_key=879f5f8cd45cf1504ae99988cadcd7b7d566516b9132c36e58605288bc59863a")
     fun getImages(@Query("q") query: String, @Query("ijn") page: Int): Call<ImagesResults>
 }

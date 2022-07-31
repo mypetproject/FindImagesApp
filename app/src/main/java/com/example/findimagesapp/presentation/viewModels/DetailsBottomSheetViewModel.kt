@@ -6,6 +6,13 @@ import com.example.findimagesapp.presentation.MainActivity
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
+/**
+ * View model for DetailsBottomSheet fragment
+ *
+ * @param repositoryImpl a repository for working with a search service
+ *
+ * @author S. Kishkar
+ */
 @HiltViewModel
 class DetailsBottomSheetViewModel @Inject constructor(repositoryImpl: RepositoryImpl): ViewModel() {
 

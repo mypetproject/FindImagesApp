@@ -4,6 +4,11 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 
+/**
+ * Adapter for image list in original size
+ *
+ * @author S. Kishkar
+ */
 class ImagesViewPagerAdapter(fragmentActivity: FragmentActivity) :
     FragmentStateAdapter(fragmentActivity) {
 

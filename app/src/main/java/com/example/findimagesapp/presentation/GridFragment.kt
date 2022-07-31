@@ -16,6 +16,11 @@ import com.example.findimagesapp.presentation.viewModels.GridViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
+/**
+ * Fragment with thumbnail grid
+ *
+ * @author S. Kishkar
+ */
 @AndroidEntryPoint
 class GridFragment : Fragment() {
 
@@ -26,31 +31,31 @@ class GridFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
+    ): View? {
         if (binding == null) binding = DataBindingUtil.inflate<FragmentGridBinding>(
             inflater,
             R.layout.fragment_grid,
             container,
             false
         ).apply {
-            imagesRecyclerview.adapter = ImagesListAdapter(
-                listOf()
-            ) { position ->
-                imagesListItemClicked(position)
-            }
-            imagesRecyclerview.layoutManager =
-                GridLayoutManager(context, 3, GridLayoutManager.VERTICAL, false)
-
-            imagesRecyclerview.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                    super.onScrollStateChanged(recyclerView, newState)
-
-                    if ((imagesRecyclerview.layoutManager as GridLayoutManager).findLastVisibleItemPosition() == (imagesRecyclerview.adapter as ImagesListAdapter).itemCount - 1) downloadNewData()
+            imagesRecyclerview.run {
+                adapter = ImagesListAdapter(listOf()) { position ->
+                    imagesListItemClicked(position)
                 }
-            })
+                layoutManager = GridLayoutManager(context, 3, GridLayoutManager.VERTICAL, false)
+
+                addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                    override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                        super.onScrollStateChanged(recyclerView, newState)
+                        if (!recyclerView.canScrollVertically(1) &&
+                            newState==RecyclerView.SCROLL_STATE_IDLE &&
+                            (layoutManager as GridLayoutManager).findLastCompletelyVisibleItemPosition() == (adapter as ImagesListAdapter).itemCount - 1) model.downloadAdditionalData()
+                    }
+                })
+            }
         }
         initObservers()
-        return binding?.root as View
+        return binding?.root
     }
 
     private fun initObservers() =
@@ -62,11 +67,6 @@ class GridFragment : Fragment() {
                 }
             }
         }
-
-
-    private fun downloadNewData() {
-        model.downloadAdditionalData()
-    }
 
     override fun onResume() {
         if (MainActivity.currentPosition >= 0) {

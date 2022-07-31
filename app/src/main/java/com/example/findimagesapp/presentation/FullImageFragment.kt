@@ -14,6 +14,11 @@ import com.example.findimagesapp.databinding.FragmentFullImageBinding
 import com.example.findimagesapp.presentation.viewModels.FullImageViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
+/**
+ * Fragment with image in original size
+ *
+ * @author S. Kishkar
+ */
 @AndroidEntryPoint
 class FullImageFragment : Fragment(R.layout.fragment_full_image) {
 
@@ -37,13 +42,16 @@ class FullImageFragment : Fragment(R.layout.fragment_full_image) {
                 .placeholder(circularProgressDrawable)
                 .error(imageViewModel.getThumbnailImageSizeLink(arguments?.getInt(IMAGE_POSITION) as Int))
                 .into(fullImage)
-
-            (activity as MainActivity).showInfoButton()
         }.root
 
     companion object {
-        const val IMAGE_POSITION = "image_position"
+        private const val IMAGE_POSITION = "image_position"
 
+        /**
+         * Creates a new instance of a fragment with image in original size
+         *
+         * @param position position of search result in a search result list
+         */
         fun newInstance(position: Int) = FullImageFragment().apply {
             arguments = Bundle().apply { putInt(IMAGE_POSITION, position) }
         }

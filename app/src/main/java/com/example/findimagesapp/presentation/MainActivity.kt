@@ -7,11 +7,19 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.lifecycleScope
 import com.example.findimagesapp.R
 import com.example.findimagesapp.databinding.ActivityMainBinding
 import com.example.findimagesapp.presentation.viewModels.MainActivityViewModel
+import com.example.findimagesapp.toast
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
+/**
+ * Activity with a fragments container
+ *
+ * @author S. Kishkar
+ */
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
@@ -19,7 +27,6 @@ class MainActivity : AppCompatActivity() {
     private val model: MainActivityViewModel by viewModels()
     private val gridFragment = GridFragment()
     private lateinit var binding: ActivityMainBinding
-    private var query = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,18 +38,23 @@ class MainActivity : AppCompatActivity() {
             }
 
         supportFragmentManager.beginTransaction()
+            .setReorderingAllowed(true)
             .add(R.id.fragment_container, gridFragment, GridFragment::class.simpleName)
+            .addToBackStack(null)
             .commit()
+
+        lifecycleScope.launch {
+            model.failureResponse.collect {
+                applicationContext.toast(it)
+            }
+        }
     }
 
     fun startPagerFragment() {
         supportFragmentManager
             .beginTransaction()
             .setReorderingAllowed(true)
-            .add(
-                R.id.fragment_container, PagerFragment(), PagerFragment::class.java
-                    .simpleName
-            )
+            .add(R.id.fragment_container, PagerFragment(), PagerFragment::class.java.simpleName)
             .detach(gridFragment)
             .addToBackStack(null)
             .commit()
@@ -61,11 +73,23 @@ class MainActivity : AppCompatActivity() {
         menuInflater.inflate(R.menu.activity_main_menu, menu)
         this.menu = menu
 
+        setSearchMenuItemListeners(menu)
+
+        if (supportFragmentManager.findFragmentByTag(PagerFragment::class.java.simpleName) != null) {
+            showInfoButton()
+        }
+
+        binding.toolbar.title = model.query.ifBlank { getString(R.string.default_toolbar_title) }
+
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    private fun setSearchMenuItemListeners(menu: Menu) {
         menu.findItem(R.id.search_menu_item).run {
             (actionView as SearchView).setOnQueryTextListener(object :
                 SearchView.OnQueryTextListener {
                 override fun onQueryTextSubmit(query: String?): Boolean {
-                    this@MainActivity.query = query.orEmpty()
+                    if (!query.isNullOrBlank()) binding.toolbar.title = query
                     model.downloadData(query.orEmpty())
                     return false
                 }
@@ -79,7 +103,7 @@ class MainActivity : AppCompatActivity() {
                 override fun onMenuItemActionExpand(p0: MenuItem?): Boolean {
                     (p0?.actionView as SearchView).let {
                         it.postOnAnimationDelayed(
-                            { it.setQuery(query, false) },
+                            { it.setQuery(model.query, false) },
                             SEARCH_VIEW_SET_TEXT_DELAY
                         )
                     }
@@ -91,14 +115,6 @@ class MainActivity : AppCompatActivity() {
                 }
             })
         }
-
-        if (supportFragmentManager.findFragmentByTag(PagerFragment::class.java.simpleName) != null) {
-            showInfoButton()
-        }
-
-        binding.toolbar.title = query.ifBlank { getString(R.string.default_toolbar_title) }
-
-        return super.onCreateOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -118,12 +134,11 @@ class MainActivity : AppCompatActivity() {
         DetailsBottomSheet().show(supportFragmentManager, DetailsBottomSheet.TAG)
     }
 
-
     fun fullImageShown() {
         invalidateOptionsMenu()
     }
 
-    fun showInfoButton() {
+    private fun showInfoButton() {
         menu?.findItem(R.id.info)?.isVisible = true
         menu?.findItem(R.id.search_menu_item)?.isVisible = false
     }

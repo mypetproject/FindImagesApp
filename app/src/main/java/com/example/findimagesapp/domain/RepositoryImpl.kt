@@ -2,13 +2,22 @@ package com.example.findimagesapp.domain
 
 import com.example.findimagesapp.dataModels.ImageResult
 import com.example.findimagesapp.dataModels.ImagesResults
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import javax.inject.Inject
 
+/**
+ * Implementing of an repository for working with a search service
+ *
+ * @param interactorImpl an interactor for working with a search service
+ *
+ * @author S. Kishkar
+ */
 class RepositoryImpl @Inject constructor(private val interactorImpl: ImagesInteractorImpl) :
     Repository {
 
@@ -17,10 +26,15 @@ class RepositoryImpl @Inject constructor(private val interactorImpl: ImagesInter
 
     private val _searchResponse = MutableStateFlow<List<ImageResult>>(listOf())
 
-    val isFreeForDownload: StateFlow<Boolean>
+    val isFreeForDownload: Boolean
         get() = _isFreeForDownload
 
-    private val _isFreeForDownload: MutableStateFlow<Boolean> = MutableStateFlow(true)
+    private var _isFreeForDownload: Boolean = true
+
+    private val _failureResponse: MutableSharedFlow<String> = MutableSharedFlow(replay = 0)
+    val failureResponse : SharedFlow<String>
+        get() = _failureResponse.asSharedFlow()
+
 
     private var query = ""
     private var page = 0
@@ -30,25 +44,36 @@ class RepositoryImpl @Inject constructor(private val interactorImpl: ImagesInter
         interactorImpl.getImages(query, 0).enqueue(object : Callback<ImagesResults> {
             override fun onResponse(call: Call<ImagesResults>, response: Response<ImagesResults>) {
                 _searchResponse.value = response.body()?.imagesResults.orEmpty()
-            }
-
-            override fun onFailure(call: Call<ImagesResults>, t: Throwable) {}
-        })
-        page = 1
-    }
-
-    override fun downloadAdditionalData() {
-        _isFreeForDownload.value = false
-        interactorImpl.getImages(query, page).enqueue(object : Callback<ImagesResults> {
-            override fun onResponse(call: Call<ImagesResults>, response: Response<ImagesResults>) {
-                _searchResponse.value += response.body()?.imagesResults.orEmpty()
-                _isFreeForDownload.value = true
+                page = 1
             }
 
             override fun onFailure(call: Call<ImagesResults>, t: Throwable) {
-                _isFreeForDownload.value = true
+                CoroutineScope(Dispatchers.IO).launch {
+                    _failureResponse.emit(SEARCH_FAILED + t)
+                }
             }
         })
-        page++
+    }
+
+    override fun downloadAdditionalData() {
+        _isFreeForDownload = false
+        interactorImpl.getImages(query, page).enqueue(object : Callback<ImagesResults> {
+            override fun onResponse(call: Call<ImagesResults>, response: Response<ImagesResults>) {
+                _searchResponse.value += response.body()?.imagesResults.orEmpty()
+                _isFreeForDownload = true
+                page++
+            }
+
+            override fun onFailure(call: Call<ImagesResults>, t: Throwable) {
+                _isFreeForDownload = true
+                CoroutineScope(Dispatchers.IO).launch {
+                    _failureResponse.emit(SEARCH_FAILED + t)
+                }
+            }
+        })
+    }
+
+    companion object {
+        private const val SEARCH_FAILED = "Search failed\n"
     }
 }

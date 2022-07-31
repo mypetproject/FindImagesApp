@@ -12,6 +12,11 @@ import com.example.findimagesapp.presentation.viewModels.DetailsBottomSheetViewM
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 
+/**
+ * Fragment with search result details
+ *
+ * @author S. Kishkar
+ */
 @AndroidEntryPoint
 class DetailsBottomSheet : BottomSheetDialogFragment() {
 
@@ -32,6 +37,9 @@ class DetailsBottomSheet : BottomSheetDialogFragment() {
     }.root
 
     companion object {
+        /**
+         * DetailsBottomSheet fragment tag
+         */
         const val TAG = "DetailsBottomSheet"
     }
 }

@@ -7,6 +7,11 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Inject
 
+/**
+ * Implementing of an interactor for working with a search service
+ *
+ * @author S. Kishkar
+ */
 class ImagesInteractorImpl @Inject constructor() : ImagesInteractor {
 
     override fun getImages(query: String, page: Int): Call<ImagesResults> = Retrofit.Builder()

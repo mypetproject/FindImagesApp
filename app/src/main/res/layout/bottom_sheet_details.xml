@@ -18,17 +18,20 @@
                 style="@style/TextAppearance.AppCompat.Widget.PopupMenu.Header"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_margin="@dimen/details_bottom_sheet_margin"
                 android:text="@string/details" />
 
             <TextView
                 android:id="@+id/title"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/details_bottom_sheet_margin" />
 
             <TextView
                 android:id="@+id/link"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/details_bottom_sheet_margin" />
         </LinearLayout>
     </FrameLayout>
 </layout>

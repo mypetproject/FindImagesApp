@@ -11,6 +11,11 @@ import androidx.databinding.DataBindingUtil
 import com.example.findimagesapp.R
 import com.example.findimagesapp.databinding.ActivityWebviewBinding
 
+/**
+ * Screen for web view display functionality
+ *
+ * @author S. Kishkar
+ */
 class WebViewActivity : AppCompatActivity() {
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -23,18 +28,23 @@ class WebViewActivity : AppCompatActivity() {
                     webChromeClient = object : WebChromeClient() {
                         override fun onProgressChanged(view: WebView?, newProgress: Int) {
                             super.onProgressChanged(view, newProgress)
-                            if (progress == 100) {
+                            if (progress == MAX_PROGRESS) {
                                 it.progressCircular.isGone = true
                                 it.webview.isVisible = true
                             }
                         }
                     }
                     loadUrl(intent.getStringExtra(URL).orEmpty())
+                    settings.javaScriptEnabled = true
                 }
             }
     }
 
     companion object {
+        /**
+         * Tag for extra string with URL
+         */
         const val URL = "URL"
+        private const val MAX_PROGRESS = 100
     }
 }

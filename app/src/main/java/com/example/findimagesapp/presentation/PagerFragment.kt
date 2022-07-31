@@ -16,6 +16,11 @@ import com.example.findimagesapp.presentation.viewModels.PagerViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
+/**
+ * Fragment with ViewPager for full size images
+ *
+ * @author S. Kishkar
+ */
 @AndroidEntryPoint
 class PagerFragment : Fragment() {
 
@@ -33,12 +38,16 @@ class PagerFragment : Fragment() {
             container,
             false
         ).apply {
+            binding = this
+
             fullImagesViewpager.run {
                 adapter = ImagesViewPagerAdapter(activity as MainActivity).apply {
                     itemsCount = model.imagesListFlow.value.size
                 }
+
                 offscreenPageLimit = 3
                 setCurrentItem(MainActivity.currentPosition, false)
+
                 registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
                     override fun onPageSelected(position: Int) {
                         super.onPageSelected(position)
@@ -46,6 +55,7 @@ class PagerFragment : Fragment() {
                     }
                 })
             }
+
             openLinkButton.setOnClickListener {
                 startActivity(Intent(context, WebViewActivity::class.java).apply {
                     putExtra(
@@ -55,7 +65,6 @@ class PagerFragment : Fragment() {
                 })
             }
             (activity as MainActivity).fullImageShown()
-            binding = this
             initObservers()
         }.root
 

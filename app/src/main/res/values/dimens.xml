@@ -2,4 +2,5 @@
 <resources>
     <dimen name="rv_item_height">100dp</dimen>
     <dimen name="rv_item_margin">5dp</dimen>
+    <dimen name="details_bottom_sheet_margin">5dp</dimen>
 </resources>

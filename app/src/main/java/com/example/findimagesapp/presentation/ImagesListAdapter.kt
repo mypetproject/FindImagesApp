@@ -7,11 +7,21 @@ import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.bumptech.glide.Glide
 import com.example.findimagesapp.databinding.ItemImagesRecyclerviewBinding
 
+/**
+ * Adapter for thumbnail list
+ *
+ * @author S. Kishkar
+ */
 class ImagesListAdapter(
     private var imageResultList: List<String>,
     private val onItemClick: ((Int) -> Unit)
 ) : RecyclerView.Adapter<ImagesListAdapter.ImageViewHolder>() {
 
+    /**
+     * Method for setting a new list of URLs
+     *
+     * @param images list of URLs
+     */
     fun setImageResultList(images: List<String>) {
         imageResultList = images
     }
